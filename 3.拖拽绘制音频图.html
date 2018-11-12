@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+        }
+        canvas {
+            display: block;
+            background: #06af8f linear-gradient(135deg,rgb(142,132,133) 0%,rgb(230,132,110) 100%);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="cvs"></canvas>
+</body>
+<script>
+
+    let cvs = document.getElementById('cvs'),
+        cxt = cvs.getContext('2d'),
+        ww = window.innerWidth,
+        wh = window.innerHeight;
+    cvs.width = ww;
+    cvs.height = wh;
+
+    let color = cxt.createLinearGradient(ww/2,wh/2-100,ww/2,wh/2+100);
+    color.addColorStop(0.2,'#dd3518');
+    color.addColorStop(0.5,'#c51ed4');
+    color.addColorStop(0.8,'#0ba5e8');
+    cxt.fillStyle = color;
+
+    window.onresize = function () {
+        ww = window.innerWidth;
+        wh = window.innerHeight;
+        cvs.width = ww;
+        cvs.height = wh;
+        cxt.fillStyle = color;
+    };
+
+    document.ondragover = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+    document.ondrop = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let dataTransfer = e.dataTransfer,
+            au = dataTransfer.files[0],
+            blob = new Blob([au],{type:'audio/mpeg'}),
+            url = window.URL.createObjectURL(blob);
+
+        let eleAU = document.createElement('audio');
+        eleAU.src = url;
+        eleAU.autoplay = 'autoplay';
+        eleAU.play();
+        console.log(au);
+
+        //绘画音频
+
+        function drawAudio(ele) {
+            //ele 为上面创建的audio标签 ,用来监听自身音频变化
+
+            //创建音频对象
+            let audioCXT = new AudioContext();
+
+            //创建分析器
+            let analyser = audioCXT.createAnalyser();
+
+            // 创建对象分析audio标签
+            let audioSrc = audioCXT.createMediaElementSource(ele);
+
+            // 链接分析器和分析标签
+            audioSrc.connect(analyser);
+
+            // 连接扬声器
+            audioSrc.connect(audioCXT.destination);
+
+            //根据数据绘制矩形
+
+            let count = 200; //绘制的数量
+            let data = new Uint8Array(analyser.frequencyBinCount)//二进制频率
+
+
+            drawData();
+            function drawData() {
+
+                analyser.getByteFrequencyData(data);//获取分析出来的频率数据
+
+                let step = Math.round(data.length/count);//每隔 step个 取一个数进行绘制
+
+
+                cxt.clearRect(0,0,ww,wh);
+                for (let i =0; i<count;i++){
+
+                    let h = data[i*step];
+                    cxt.fillRect(ww/2+i*4,wh/2,2,-h);
+                    cxt.fillRect(ww/2-i*4,wh/2,2,-h);
+                    cxt.fillRect(ww/2+i*4,wh/2,2,h);
+                    cxt.fillRect(ww/2-i*4,wh/2,2,h);
+                }
+
+                requestAnimationFrame(drawData);
+            }
+
+        }
+        drawAudio(eleAU);
+    }
+
+</script>
+</html>

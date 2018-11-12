@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<script>
+
+    let num = true;
+    document.onclick = function () {
+
+
+        let xhr = new XMLHttpRequest(); //创建ajax 对象
+
+        xhr.responseType = 'arraybuffer'; //声明返回的数据类型
+        xhr.open('post','./music/1.mp3',true);
+        xhr.send();
+        xhr.onload = function () {
+            let buffer = this.response,
+                blob = new Blob([buffer],{type:'audio/mpeg'});
+            let url = window.URL.createObjectURL(blob),
+                audio = new Audio();
+            audio.src = url;
+            audio.volume = 0.8; // 设置播放音量 范围 0--1
+            document.body.appendChild(audio);//可不添加到body
+            audio.play();
+
+        }
+
+
+    };
+
+</script>
+</body>
+</html>         

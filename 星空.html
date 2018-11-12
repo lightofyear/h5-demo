@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body{
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        canvas{
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<canvas id="canvas">
+    你的浏览器竟然不支持canvas,赶紧去更新下,进入奇妙世界!
+</canvas>
+
+<script>
+    var cvs = document.getElementById("canvas"),
+        cxt = cvs.getContext("2d"),
+        w = window.innerWidth,
+        h = window.innerHeight,
+        n = 100,
+        json = [],
+        star ={},
+        start = [],
+        pi = 2*Math.PI;
+        cvs.width = w;
+        cvs.height = h;
+
+    for(var i=0;i<n;i++){
+        json[i]={};
+        json[i].x = Math.random()*w;
+        json[i].y = Math.random()*h;
+        json[i].r = 0;
+    }
+
+    !function draw() {
+
+        cxt.clearRect(0,0,w,h);
+
+        for(var i=0;i<n;i++){
+            // var c  += Math.random()*2-1;
+            json[i].r += Math.random()*2-1;
+            json[i].r = Math.max(0,json[i].r);
+            json[i].r = Math.min(12,json[i].r);
+            circle(json[i].x,json[i].y,json[i].r);
+        }
+            // console.log(Math.sin(0),Math.sin(pi/4));
+        if(Math.random()>0.98){
+            stari = {};
+            stari.x =star.x = w/2 + Math.random()*w/2;
+            stari.y = 0;
+            stari.r = 5;
+            stari.x1 = - Math.cos(Math.random()*pi/4)*30;
+            stari.y1 =  Math.sin(Math.random()*pi/4)*20;
+            stari.x2 =stari.x+50*Math.SQRT2;
+            stari.y2 = stari.y+30*Math.SQRT2;
+            start.push(stari);
+        }
+        if(start.length!==0){
+
+            for(var i=0;i<start.length;i++){
+
+                drawStar(start[i].x,start[i].y,start[i].r);
+                drawTriangle()
+                start[i].x +=start[i].x1;
+                start[i].y +=start[i].y1;
+                start[i].x2 +=start[i].x1;
+                start[i].y2 +=start[i].y1;
+
+                if(start[i].x<0||start[i].y>h){
+                    start.splice(start[i],1);
+                    console.log(start.length)
+                }
+
+
+            }
+        }
+
+
+        requestAnimationFrame(draw);
+
+    }();
+
+    
+    function drawTriangle() {
+       console.log("妈卖批");
+    }
+
+    function drawStar(x,y,r) {
+        // console.log(x,y,r);
+        cxt.save();
+        cxt.fillStyle="#ffffff";
+        cxt.beginPath();
+        cxt.arc(x,y,r,0,pi,true);
+        cxt.closePath();
+        cxt.fill();
+        cxt.restore();
+    }
+
+
+
+    function circle(x,y,z) {
+
+        cxt.save();
+        var radial = cxt.createRadialGradient(x,y,0,x,y,z);
+        radial.addColorStop(0,"rgba(255,255,255,0.8)");
+        radial.addColorStop(.1,"rgba(255,255,255,0.8)");
+        radial.addColorStop(.2,"rgba(255,255,255,0.08)");
+        radial.addColorStop(1,"rgba(255,255,255,0)");
+        cxt.fillStyle = radial;
+        cxt.beginPath();
+        cxt.arc(x,y,z,0,pi,true);
+        cxt.closePath();
+        cxt.fill();
+        cxt.restore();
+    }
+
+    </script>
+</body>
+</html>

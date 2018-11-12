@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数字雨</title>
+    <style>
+        body{
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="cvs" style="background: #000">
+
+    </canvas>
+
+    <script>
+
+        var cvs = document.getElementById("cvs");
+        var cxt = cvs.getContext("2d");
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        var x1 = w/16;
+        var x=[];
+        var y=[];
+        cvs.width = window.innerWidth;
+        cvs.height = window.innerHeight;
+
+        for (var i = 0;i<x1;i++){y[i]=0;x[i]=16*(i)}
+
+        !function draw() {
+            cxt.fillStyle="rgba(0,0,0,0.1)";
+            cxt.fillRect(0,0,w,h);
+            cxt.moveTo(100,y);
+            cxt.fillStyle="#0f0";
+            cxt.font= "16px 微软雅黑";
+            var a = parseInt(Math.random()*10);
+            for (var i=0;i<w;i++){
+                var ran =Math.random();
+                y[i]>w&&ran>0.9 ? y[i]=0 : y[i];
+            }
+            for (var j= 0;j<x1;j++){
+                cxt.fillText(a,x[j],y[j],16);
+                y[j] +=16;
+            }
+            cxt.fill();
+            c=requestAnimationFrame(draw);
+        }();
+
+    </script>
+</body>
+</html>

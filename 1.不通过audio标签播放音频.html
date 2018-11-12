@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<script>
+
+    document.onclick = function () {
+
+        let audioCxt = new AudioContext();  //创建audio对象  挂载这许多属性和方法
+
+        let xhr = new XMLHttpRequest(); //创建ajax 对象
+
+        xhr.responseType = 'arraybuffer'; //声明返回的数据类型
+        xhr.open('post','./music/1.mp3',true);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (this.readyState===4&&this.status===200){
+                console.log(this.response);
+
+                //解析音频数据
+                audioCxt.decodeAudioData(this.response,buffer=>{ //解析 回调
+
+                    // 进行播放
+                    let souceNode = audioCxt.createBufferSource(); //1. 创建音乐数据资源
+                    souceNode.buffer = buffer;
+                    souceNode.connect(audioCxt.destination); //链接扬声器
+
+                    souceNode.start(0);//进行播放
+
+                });
+
+            }
+        };
+
+
+    };
+
+</script>
+</body>
+</html>

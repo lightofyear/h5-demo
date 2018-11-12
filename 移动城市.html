@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    *{margin: 0}
+    canvas{
+        display: block;
+        background: #cacaca;
+    }
+</style>
+<body>
+    <canvas id="cvs"></canvas>
+</body>
+<script>
+
+    let cvs = document.getElementById('cvs'),
+        cxt = cvs.getContext('2d'),
+        w = window.innerWidth,
+        h = window.innerHeight;
+
+    cvs.width = w;
+    cvs.height = h;
+
+    cxt.globalAlpha = 0.8;
+    window.onresize = function () {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        cvs.width = w;
+        cvs.height = h;
+    };
+
+    function Woof(x,v,color) {
+        this.x = x;
+        this.y = 0;
+        this.v = v;
+        this.color = color;
+        this.w = 10 + Math.random()*50;
+        this.h =  20 + Math.random()*300;
+    }
+
+    Woof.prototype = {
+        upload : function () {
+            this.x += this.v;
+            (this.x < -w-this.w) && (this.x = this.w);
+
+        },
+        render : function () {
+            cxt.save();
+            cxt.translate(w,h);
+            cxt.fillStyle = this.color;
+            cxt.fillRect(this.x,this.y,-this.w,-this.h);
+            cxt.restore();
+        }
+    };
+
+    let num = 50,
+        speed = -5,
+        woof1 = [],
+        woof2 = [],
+        woof3 = [];
+    for (let i =0;i<num;i++){
+        let woof = new Woof(-Math.random()*w,speed*0.5,'#aeaeae');
+        woof.render();
+        woof1.push(woof);
+    }
+
+    for (let i =0;i<num;i++){
+        let woof = new Woof(-Math.random()*w,speed*0.8,'#666666');
+        woof.render();
+        woof2.push(woof);
+
+    }for (let i =0;i<num;i++){
+        let woof = new Woof(-Math.random()*w,speed,'#040404');
+        woof.render();
+        woof3.push(woof);
+    }
+
+    function upload() {
+        cxt.clearRect(0,0,w,h);
+
+        for (let i =0;i<num;i++){
+            woof1[i].render();
+            woof1[i].upload();
+        }
+        for (let i =0;i<num;i++){
+            woof2[i].render();
+            woof2[i].upload();
+        }
+        for (let i =0;i<num;i++){
+            woof3[i].render();
+            woof3[i].upload();
+        }
+
+        requestAnimationFrame(upload);
+    }
+    upload()
+</script>
+</html>

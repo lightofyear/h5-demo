@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>line</title>
+    <style>
+        body{
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        canvas{
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+    <canvas id="canvas">
+        你的浏览器竟然不支持canvas,赶紧去更新下,进入奇妙世界!
+    </canvas>
+
+    <script>
+        var cvs = document.getElementById("canvas"),
+            cxt = cvs.getContext("2d"),
+            w = window.innerWidth,
+            h = window.innerHeight,
+            n = 150,
+            json = [],
+            start = {},
+            pi = 2*Math.PI;
+            cvs.width = w;
+            cvs.height = h;
+        Draw();
+
+        function Draw() {
+
+            for (i=0; i<200;i++){
+                json[i] = {x:Math.random()*w,y:Math.random()*h,x1:Math.random()*4-2,y1:Math.random()*4-2};
+                circle(json[i].x,json[i].y);
+            }
+            run();
+
+        }
+
+        document.onmousemove=function (e) {
+            e = e  || window.event;
+            start.a = e.clientX,
+            start.b = e.clientY;
+        };
+
+        function run() {
+            console.log(start);
+            cxt.clearRect(0,0,w,h);
+            for (i=0; i<n;i++){
+                json[i].x >w ||json[i].x< 0 ? json[i].x1 = -json[i].x1 : json[i].x1;
+                json[i].y >h ||json[i].y< 0 ? json[i].y1 = -json[i].y1 : json[i].y1;
+                json[i].x = json[i].x-json[i].x1;
+                json[i].y = json[i].y-json[i].y1;
+                circle(json[i].x,json[i].y);
+            }
+            for (var i=0;i<n;i++){
+                for (var j=0;j<n;j++){
+                    if((json[i].x-json[j].x)*(json[i].x-json[j].x)+(json[i].y-json[j].y)*(json[i].y-json[j].y)<60*60){
+                        line(json[i].x,json[i].y,json[j].x,json[j].y,false);
+                    }
+                    if(start.a){
+                        if((start.a-json[i].x)*(start.a-json[i].x)+(start.b-json[i].y)*(start.b-json[i].y)<80*80){
+                            line(json[i].x,json[i].y,start.a,start.b,true);
+                        }
+                    }
+                }
+            }
+            // console.log(lJson);
+            requestAnimationFrame(run);
+        }
+
+        function line(x1,y1,x2,y2,boolean) {
+
+                cxt.save();
+                var linear=cxt.createLinearGradient(x1,y1,x2,y2);
+                cxt.lineWidth = 0.1;
+                if (boolean){
+                    linear.addColorStop(0,"#6495ED");
+                    linear.addColorStop(1,"#8B008B");
+                }
+                else {
+                    linear.addColorStop(0,"#DA70D6");
+                    linear.addColorStop(1,"#00008B");
+                }
+
+                cxt.strokeStyle=linear;
+                cxt.moveTo(x1,y1);
+                cxt.lineTo(x2,y2);
+                cxt.stroke();
+                cxt.restore();
+        }
+        function circle(x,y) {
+
+            cxt.save();
+            cxt.beginPath();
+            cxt.fillStyle = "pink";
+            cxt.arc(x,y,0.5,0,pi,false);
+            cxt.fill();
+            cxt.restore();
+        }
+
+    </script>
+
+</body>
+</html>

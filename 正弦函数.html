@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>正弦</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            background: #000;
+        }
+        canvas{
+            display: block;
+            background: #fff;
+            margin: 50px auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="cvs" width="600" height="400">
+        您的浏览器不支持canvas,请更新后重试!
+    </canvas>
+    <script>
+        var cvs = document.getElementById("cvs");
+        var cxt = cvs.getContext("2d");
+        cxt.save();
+        var x = 0,y=0,change=0;
+        cxt.beginPath();
+        cxt.translate(0,200);
+        cxt.moveTo(0,0);
+        cxt.strokeStyle="#ee0";
+        function draw() {
+            y = Math.sin(Math.PI/200*-x-change/200)*100;
+            cxt.lineTo(x,y);
+            cxt.stroke();
+            if (x>=600){
+                x=x-600;
+                y=y;
+                change +=600;
+            }
+            cxt.moveTo(x,y);
+            x++
+            c=requestAnimationFrame(draw);
+
+        }
+        c=requestAnimationFrame(draw);
+    </script>
+</body>
+</html>
